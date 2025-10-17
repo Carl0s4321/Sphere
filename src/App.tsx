@@ -2,11 +2,14 @@ import * as THREE from "three";
 import { useEffect, useRef, useState, type JSX } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 
+import fragmentShader from "./shaders/fragment.glsl";
+import vertexShader from "./shaders/vertex.glsl";
+
 function Box(props: JSX.IntrinsicElements["mesh"]) {
   const ref = useRef<THREE.Mesh>(null!);
   const [hovered, hover] = useState(false);
   const [clicked, click] = useState(false);
-  
+
   useFrame((_, delta) => {
     // console.log("state", state);
     // console.log('delta', delta)
@@ -31,7 +34,11 @@ function Box(props: JSX.IntrinsicElements["mesh"]) {
       onPointerOut={() => hover(false)}
     >
       <sphereGeometry args={[1]} />
-      <shaderMaterial uniforms={{ uTime: { value: 0 } }} />
+      <shaderMaterial
+        uniforms={{ uTime: { value: 0 } }}
+        fragmentShader={fragmentShader}
+        vertexShader={vertexShader}
+      />
     </mesh>
   );
 }
