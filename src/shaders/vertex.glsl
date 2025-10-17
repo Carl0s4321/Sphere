@@ -122,7 +122,10 @@ void main() {
     vDisplacement = wave(noisePattern);
 
 
-    vec4 modelViewPosition = modelViewMatrix * vec4( position, 1.0 );
+    // position + normal * vDisplacement -> from the original sphere, push by `vDisplacement` value along the normal
+    float displacement = vDisplacement / 2.0; // too tall
+    vec3 newPosition = position + normal * displacement;
+    vec4 modelViewPosition = modelViewMatrix * vec4( newPosition, 1.0 );
     vec4 projectedPosition = projectionMatrix * modelViewPosition;
 	gl_Position = projectedPosition;
 }
