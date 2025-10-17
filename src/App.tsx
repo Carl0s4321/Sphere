@@ -34,7 +34,7 @@ function Box(props: JSX.IntrinsicElements["mesh"]) {
       // onPointerOver={() => hover(true)}
       // onPointerOut={() => hover(false)}
     >
-      <sphereGeometry args={[1]} />
+      <icosahedronGeometry args={[2, 10]} />
       <shaderMaterial
         uniforms={{ uTime: { value: 0 } }}
         fragmentShader={fragmentShader}
