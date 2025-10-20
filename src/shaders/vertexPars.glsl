@@ -1,11 +1,7 @@
 uniform float uTime;
 
-varying vec3 vPosition;
-varying vec3 vNormal;
-varying vec2 vUv;
 varying float vDisplacement;
 
-#define PI 3.14159
 
 /* 
 * SMOOTH MOD
@@ -108,72 +104,3 @@ float fit(float unscaled, float originalMin, float originalMax, float minAllowed
 float wave(vec3 position){
     return fit(smoothMod(position.y * 5.0, 1.0, 1.5), 0.35,0.6, 0.0, 1.0);
 }
-
-
-void main() {
-    vPosition = position;
-    vNormal = normal;
-    vUv = uv;
-
-
-    vec3 coords = vNormal;
-    coords.y += uTime;
-    vec3 noisePattern = vec3(noise(coords));
-    vDisplacement = wave(noisePattern);
-
-
-    // position + normal * vDisplacement -> from the original sphere, push by `vDisplacement` value along the normal
-    float displacement = vDisplacement / 2.0; // too tall
-    vec3 newPosition = position + normal * displacement;
-    vec4 modelViewPosition = modelViewMatrix * vec4( newPosition, 1.0 );
-    vec4 projectedPosition = projectionMatrix * modelViewPosition;
-	gl_Position = projectedPosition;
-}
-
-/* ***** DEFAULT VERTEX SHADER ***** */
-/* 
-#define STANDARD
-varying vec3 vViewPosition;
-#ifdef USE_TRANSMISSION
-	varying vec3 vWorldPosition;
-#endif
-#include <common>
-#include <batching_pars_vertex>
-#include <uv_pars_vertex>
-#include <displacementmap_pars_vertex>
-#include <color_pars_vertex>
-#include <fog_pars_vertex>
-#include <normal_pars_vertex>
-#include <morphtarget_pars_vertex>
-#include <skinning_pars_vertex>
-#include <shadowmap_pars_vertex>
-#include <logdepthbuf_pars_vertex>
-#include <clipping_planes_pars_vertex>
-void main() {
-	#include <uv_vertex>
-	#include <color_vertex>
-	#include <morphinstance_vertex>
-	#include <morphcolor_vertex>
-	#include <batching_vertex>
-	#include <beginnormal_vertex>
-	#include <morphnormal_vertex>
-	#include <skinbase_vertex>
-	#include <skinnormal_vertex>
-	#include <defaultnormal_vertex>
-	#include <normal_vertex>
-	#include <begin_vertex>
-	#include <morphtarget_vertex>
-	#include <skinning_vertex>
-	#include <displacementmap_vertex>
-	#include <project_vertex>
-	#include <logdepthbuf_vertex>
-	#include <clipping_planes_vertex>
-	vViewPosition = - mvPosition.xyz;
-	#include <worldpos_vertex>
-	#include <shadowmap_vertex>
-	#include <fog_vertex>
-#ifdef USE_TRANSMISSION
-	vWorldPosition = worldPosition.xyz;
-#endif
-}
- */
