@@ -12,6 +12,12 @@ import vertexShaderMain from "./shaders/vertexMain.glsl";
 
 import { OrbitControls } from "@react-three/drei";
 
+import {
+  EffectComposer,
+  Bloom,
+  ToneMapping,
+} from "@react-three/postprocessing";
+
 function Box(props: JSX.IntrinsicElements["mesh"]) {
   const ref = useRef<THREE.Mesh>(null!);
   const materialRef = useRef<THREE.MeshStandardMaterial>(null!);
@@ -34,6 +40,7 @@ function Box(props: JSX.IntrinsicElements["mesh"]) {
   //   /* @ts-ignore */
   //   console.log("uniforms", ref?.current.material.uniforms);
   // }, [ref]);
+  const color = "hotpink";
 
   return (
     <mesh
@@ -44,8 +51,10 @@ function Box(props: JSX.IntrinsicElements["mesh"]) {
       // onPointerOver={() => hover(true)}
       // onPointerOut={() => hover(false)}
     >
-      <icosahedronGeometry args={[2, 200]} />
+      <icosahedronGeometry args={[2, 300]} />
       <meshStandardMaterial
+        emissive={color}
+        emissiveIntensity={3}
         ref={materialRef}
         onBeforeCompile={(shader) => {
           materialRef.current.userData.shader = shader;
@@ -87,9 +96,24 @@ function Box(props: JSX.IntrinsicElements["mesh"]) {
 
 export default function App() {
   return (
-    <Canvas>
-      <ambientLight intensity={.2} />
-      <directionalLight position={[5,5,5]}/>
+    <Canvas camera={{position:[0,0,1.7], fov:200}}>
+      <ambientLight intensity={0.5} />
+      {/* <ambientLight color={`#4255ff`} intensity={0.5} />
+      <directionalLight
+        position={[5, 5, 5]}
+        color={`#526cff`}
+        intensity={0.6}
+      /> */}
+      <EffectComposer enableNormalPass={false}>
+        <Bloom
+          mipmapBlur
+          luminanceThreshold={1}
+          levels={7}
+          intensity={0.1 * 4}
+        />
+        <ToneMapping />
+      </EffectComposer>
+
       <OrbitControls />
 
       <Box position={[0, 0, 0]} />
