@@ -3,6 +3,9 @@ import { useEffect, useRef, useState, type JSX } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 
 import fragmentShader from "./shaders/fragment.glsl";
+import fragmentShaderMain from "./shaders/fragmentMain.glsl";
+import fragmentShaderPars from "./shaders/fragmentPars.glsl";
+
 import vertexShader from "./shaders/vertex.glsl";
 import vertexShaderPars from "./shaders/vertexPars.glsl";
 import vertexShaderMain from "./shaders/vertexMain.glsl";
@@ -41,7 +44,7 @@ function Box(props: JSX.IntrinsicElements["mesh"]) {
       // onPointerOver={() => hover(true)}
       // onPointerOut={() => hover(false)}
     >
-      <icosahedronGeometry args={[2, 100]} />
+      <icosahedronGeometry args={[2, 200]} />
       <meshStandardMaterial
         ref={materialRef}
         onBeforeCompile={(shader) => {
@@ -61,8 +64,21 @@ function Box(props: JSX.IntrinsicElements["mesh"]) {
           shader.vertexShader = shader.vertexShader.replace(
             mainVertexStr,
             mainVertexStr + "\n" + vertexShaderMain
-          )
-          console.log(shader.vertexShader);
+          );
+
+          const mainFragmentStr = /* glsl */ `#include <normal_fragment_maps>`;
+          shader.fragmentShader = shader.fragmentShader.replace(
+            mainFragmentStr,
+            mainFragmentStr + "\n" + fragmentShaderMain
+          );
+
+          const parsFragmentStr = /* glsl */ `#include <bumpmap_pars_fragment>`;
+          shader.fragmentShader = shader.fragmentShader.replace(
+            parsFragmentStr,
+            parsFragmentStr + "\n" + fragmentShaderPars
+          );
+
+          console.log(shader.fragmentShader);
         }}
       />
     </mesh>
@@ -72,16 +88,9 @@ function Box(props: JSX.IntrinsicElements["mesh"]) {
 export default function App() {
   return (
     <Canvas>
-      <ambientLight intensity={Math.PI / 2} />
+      <ambientLight intensity={.2} />
+      <directionalLight position={[5,5,5]}/>
       <OrbitControls />
-      <spotLight
-        position={[10, 10, 10]}
-        angle={0.15}
-        penumbra={1}
-        decay={0}
-        intensity={Math.PI}
-      />
-      <pointLight position={[-10, -10, -10]} decay={0} intensity={Math.PI} />
 
       <Box position={[0, 0, 0]} />
     </Canvas>
